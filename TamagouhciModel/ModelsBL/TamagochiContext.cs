@@ -77,6 +77,14 @@ namespace TamagouhciModel.Models
                 return active;
 
             }
+        public void changes(Animal a)
+        {
+           this.SaveChanges();
+            a.Changes();
+           this.SaveChanges();
+            a.UptadeHealthCondition();
+            this.SaveChanges();
+        }
        
      }
        

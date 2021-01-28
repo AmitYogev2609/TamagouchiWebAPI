@@ -15,6 +15,7 @@ namespace TamagouchiWebAPI.DataTransferObjects
         public DateTime? PbirthDay { get; set; }
         public string PfirstName { get; set; }
         public string PlastName { get; set; }
+        public string PlayerPassword { get; set; }
         public PlayerDTO()
         { }
         public PlayerDTO(Player p)
