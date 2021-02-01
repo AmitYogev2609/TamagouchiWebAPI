@@ -32,7 +32,8 @@ namespace TamagouhciModel.Models
             }
             public Animal AddAnimal(string name, Player currentplyer)
             {
-                Animal pet = new Animal();
+            
+                Animal pet = this.CreateProxy<Animal>(); 
                 pet.AnimalName = name;
                 pet.AnimalWegight = 5;
                 pet.Healthcondition = 1;
@@ -47,6 +48,8 @@ namespace TamagouhciModel.Models
                 {
                     this.Animals.Add(pet);
                     this.SaveChanges();
+                  currentplyer.ChangeActiveAnimal(pet);
+                  this.SaveChanges();
                 }
                 catch 
                 {
@@ -70,7 +73,7 @@ namespace TamagouhciModel.Models
                     this.Players.Add(active);
                     this.SaveChanges();
                 }
-                catch
+                catch(Exception e)
                 {
                     return null;
                 }
@@ -84,6 +87,38 @@ namespace TamagouhciModel.Models
            this.SaveChanges();
             a.UptadeHealthCondition();
             this.SaveChanges();
+        }
+        public void DoAction(Animal pet,int i)
+        {
+            switch (i)
+            {
+                case 1:
+                    {
+                        pet.CleanFunction();
+                        this.SaveChanges();
+                        pet.UptadeHealthCondition();
+                        this.SaveChanges();
+
+                    }
+                    break;
+                case 2:
+                    {
+                        pet.FeedFunction();
+                        this.SaveChanges();
+                        pet.UptadeHealthCondition();
+                        this.SaveChanges();
+                    }
+                    break;
+                case 3:
+                    {
+                        pet.PlayFunction();
+                        this.SaveChanges();
+                        pet.UptadeHealthCondition();
+                        this.SaveChanges();
+                    }
+                    break;
+
+            }
         }
        
      }

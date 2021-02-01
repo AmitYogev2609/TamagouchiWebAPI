@@ -53,7 +53,7 @@ namespace TamagouchiWebAPI.Controllers
             {
                 Player p = context.Players.Where(pp => pp.PlayerId == pDto.PlayerId).FirstOrDefault();
                  
-                if (p != null)
+                if (p != null&&p.PactiveAnimalNavigation!=null)
                 {
                     AnimalDTO activePet = new AnimalDTO(p.PactiveAnimalNavigation);
                     Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
@@ -92,16 +92,19 @@ namespace TamagouchiWebAPI.Controllers
         public PlayerDTO SignUp([FromBody] PlayerDTO a)
         {
             DateTime d = new DateTime(a.PbirthDay.Value.Year, a.PbirthDay.Value.Month, a.PbirthDay.Value.Day);
-            Player p = context.AddPlayer(a.PfirstName, a.PlastName, a.Email,a.UserName,a.PlayerPassword , a.PlayerPassword, d);
+            Player p =  context.AddPlayer(a.PfirstName, a.PlastName, a.Email,a.UserName,a.PlayerPassword , a.PlayerPassword, d);
             if (p != null)
             {
                 PlayerDTO pDTO = new PlayerDTO(p);
                 HttpContext.Session.SetObject("player", pDTO);
                 Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
-                return pDTO;                
-            }           
+                return pDTO;
+            }
+            else
+            {
                 Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
-                return null;          
+                return null;
+            }
         }
 
         [Route("AddPet")]
@@ -117,8 +120,8 @@ namespace TamagouchiWebAPI.Controllers
                 
                 if (createPet != null)
                 {
-                 p.ChangeActiveAnimal(createPet);
-                AnimalDTO aniDTO= new AnimalDTO(createPet);
+                  
+                   AnimalDTO aniDTO= new AnimalDTO(p.PactiveAnimalNavigation);
                     Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
 
                     return aniDTO;
@@ -129,5 +132,56 @@ namespace TamagouchiWebAPI.Controllers
             Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
             return null;
         }
+        [Route("DoAction")]
+        [HttpGet]
+        public AnimalDTO DoAction([FromQuery] int i)
+        {
+            PlayerDTO pDto = HttpContext.Session.GetObject<PlayerDTO>("player");
+            //Check if user logged in!
+            if (pDto != null)
+            {
+                Player p = context.Players.Where(pp => pp.PlayerId == pDto.PlayerId).FirstOrDefault();
+                Animal pet = p.PactiveAnimalNavigation;
+
+                if (pet != null)
+                {
+                    context.DoAction(pet, i);
+                    Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
+                    return new AnimalDTO(pet);
+                }
+              
+            }
+            Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
+            return null;
+        }
+        [Route("GetAction")]
+        [HttpGet]
+        public List<FunctionDTO> GetFunctions()
+        {
+            PlayerDTO pDto = HttpContext.Session.GetObject<PlayerDTO>("player");
+            //Check if user logged in!
+            if (pDto != null)
+            {
+                Player p = context.Players.Where(pp => pp.PlayerId == pDto.PlayerId).FirstOrDefault();
+                Animal pet = p.PactiveAnimalNavigation;
+
+                if (pet != null)
+                {
+                    List<HistoryOfFunction> functions = pet.GetHistoryOfFunctionList();
+                    List<FunctionDTO> functionDTOs = new List<FunctionDTO>();
+                    foreach (HistoryOfFunction item in functions)
+                    {
+                        functionDTOs.Add(new FunctionDTO(item));
+                    }
+                    Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
+                    return functionDTOs;
+                }
+
+            }
+            Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
+            return null;
+        }
     }
 }
+   
+

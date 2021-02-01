@@ -27,6 +27,7 @@ namespace TamagouchiWebAPI.DataTransferObjects
             PbirthDay = p.PbirthDay;
             PfirstName = p.PfirstName;
             PlastName = p.PlastName;
+            PlayerPassword = p.PlayerPassword;
         }
     }
 }
