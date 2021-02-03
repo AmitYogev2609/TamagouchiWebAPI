@@ -111,6 +111,7 @@ namespace TamagouchiWebAPI.Controllers
         [HttpGet]
         public AnimalDTO AddPet([FromQuery] string animalName)
         {
+    
             PlayerDTO pDto = HttpContext.Session.GetObject<PlayerDTO>("player");
             //Check if user logged in!
             if (pDto != null)
